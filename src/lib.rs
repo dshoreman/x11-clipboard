@@ -184,6 +184,9 @@ impl Clipboard {
                         )
                         .get_reply()?;
 
+                    dbg!(reply.type_());
+                    dbg!(target);
+
                     if reply.type_() == self.getter.atoms.incr {
                         if let Some(&size) = reply.value::<i32>().get(0) {
                             buff.reserve(size as usize);
@@ -197,6 +200,7 @@ impl Clipboard {
                         //
                         // In order not to break api compatibility, we can't add a new ErrorKind.
                         // This will become an Error in the next version.
+                        println!("target mismatch");
                         return Ok(());
                     }
 
