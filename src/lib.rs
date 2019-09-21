@@ -22,6 +22,7 @@ pub struct Atoms {
     pub clipboard: Atom,
     pub property: Atom,
     pub targets: Atom,
+    pub text_plain: Atom,
     pub string: Atom,
     pub utf8_string: Atom,
     pub incr: Atom
@@ -85,6 +86,7 @@ impl Context {
             clipboard: intern_atom!("CLIPBOARD"),
             property: intern_atom!("THIS_CLIPBOARD_OUT"),
             targets: intern_atom!("TARGETS"),
+            text_plain: intern_atom!("text/plain"),
             string: xcb::ATOM_STRING,
             utf8_string: intern_atom!("UTF8_STRING"),
             incr: intern_atom!("INCR")
@@ -195,7 +197,9 @@ impl Clipboard {
                         self.getter.connection.flush();
                         is_incr = true;
                         continue
-                    } else if reply.type_() != target {
+                    } else if reply.type_() != target && (
+                        self.getter.atoms.utf8_string != target || self.getter.atoms.text_plain != reply.type_()
+                    ) {
                         // FIXME
                         //
                         // In order not to break api compatibility, we can't add a new ErrorKind.
